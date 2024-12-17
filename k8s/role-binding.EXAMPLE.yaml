@@ -1,0 +1,14 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-validator-example-rb
+  namespace: secret-validator-ns
+subjects:
+  - kind: ServiceAccount
+    name: secret-validator-example-sa
+    namespace: secret-validator-ns
+roleRef:
+  kind: Role
+  name: secret-validator-example-role
+  apiGroup: rbac.authorization.k8s.io

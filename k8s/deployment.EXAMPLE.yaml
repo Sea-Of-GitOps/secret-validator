@@ -1,0 +1,26 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secret-validator-service
+  namespace: secret-validator-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: secret-validator
+  template:
+    metadata:
+      labels:
+        app: secret-validator
+    spec:
+      containers:
+        - name: secret-validator-container
+          image: secret-validator:0.1.0
+          env:
+            - name: KUBERNETES_SERVICE_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: KUBERNETES_SERVICE_PORT
+              value: "443"
