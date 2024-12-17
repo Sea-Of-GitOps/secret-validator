@@ -1,0 +1,34 @@
+name: Lint with pre-commit
+
+on:
+  push:
+    branches:
+      - devel
+  pull_request:
+    branches:
+      - devel
+
+jobs:
+  lint:
+    name: Run pre-commit hooks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12.0'
+
+      - name: Install pre-commit
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install pre-commit
+
+      - name: Run pre-commit hooks
+        run: |
+          source venv/bin/activate
+          pre-commit run --all-files
