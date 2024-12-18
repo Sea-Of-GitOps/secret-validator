@@ -1,0 +1,35 @@
+name: Trivy Scan
+
+on:
+  pull_request:
+    branches:
+      - main
+      - devel
+  push:
+    branches:
+      - main
+      - devel
+
+jobs:
+  trivy-scan:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Set up Trivy
+        uses: aquasecurity/trivy-action@v0.0.10
+
+      - name: Scan Docker image
+        run: |
+          trivy image --exit-code 1 --no-progress --format json -o trivy-report.json your-docker-image
+
+      - name: Upload Trivy report as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: trivy-report
+          path: trivy-report.json
