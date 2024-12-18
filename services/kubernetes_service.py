@@ -24,9 +24,7 @@ class KubernetesService:
             )
 
         except Exception as e:
-            self._logger.warning(
-                f"There isn't a kubeconfig configuration: {e}."
-            )
+            self._logger.info(f"There isn't a kubeconfig configuration: {e}.")
             try:
                 config.load_incluster_config()
                 self._logger.info(
