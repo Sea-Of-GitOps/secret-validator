@@ -8,7 +8,7 @@ KIND_CONFIG := k8s/kind/kind-cluster.EXAMPLE.yaml
 K8S_MANIFEST_DIR := k8s/
 NAMESPACE = secret-validator-ns
 
-.PHONY: test-k8s create-kind build-docker load-docker apply-k8s
+.PHONY: test-k8s create-kind build-docker load-docker apply-k8s port-forward-service-k8s
 
 test-k8s: create-kind build-docker load-docker apply-k8s
 
@@ -31,6 +31,9 @@ load-docker:
 apply-k8s:
 	echo "Applying Kubernetes manifests from directory $(K8S_MANIFEST_DIR)..."
 	kubectl apply -f $(K8S_MANIFEST_DIR)
+
+port-forward-service-k8s:
+	kubectl port-forward svc/secret-validator-service 5000:5000 -n $(NAMESPACE)
 
 clean:
 	echo "Deleting Kind cluster $(KIND_CLUSTER_NAME)..."
