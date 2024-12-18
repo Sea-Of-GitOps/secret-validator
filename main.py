@@ -1,16 +1,16 @@
 from config.logger import logger
 from controllers.factories import create_kubernetes_controller
-from kubernetes import client, config
 
 
-def main(k8s):
+def main():
     logger.info("Run Secret Validator microservice.")
+    namespace = "secret-validator-ns"
 
     kubernetes_controller = create_kubernetes_controller(logger)
     logger.debug(f"Kubernetes Controller is created: {kubernetes_controller}")
 
+    kubernetes_controller.get_pods(namespace)
+
 
 if __name__ == "__main__":
-    config.load_incluster_config()
-    k8s = client.CoreV1Api()
-    main(k8s)
+    main()

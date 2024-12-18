@@ -14,13 +14,9 @@ spec:
       labels:
         app: secret-validator
     spec:
+      serviceAccountName: secret-validator-example-sa
       containers:
         - name: secret-validator-container
           image: secret-validator:0.1.0
-          env:
-            - name: KUBERNETES_SERVICE_HOST
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
-            - name: KUBERNETES_SERVICE_PORT
-              value: "443"
+          ports:
+            - containerPort: 5000

@@ -30,3 +30,13 @@ load-docker:
 apply-k8s:
 	echo "Applying Kubernetes manifests from directory $(K8S_MANIFEST_DIR)..."
 	kubectl apply -f $(K8S_MANIFEST_DIR)
+
+clean:
+	echo "Deleting Kind cluster $(KIND_CLUSTER_NAME)..."
+	kind delete cluster --name $(KIND_CLUSTER_NAME)
+	echo "Removing Docker image $(DOCKER_IMAGE)..."
+	docker image rm -f $(DOCKER_IMAGE) || true
+	echo "Clean up completed."
+
+clean-deployment:
+	kubectl delete -f k8s/deployment.EXAMPLE.yaml
