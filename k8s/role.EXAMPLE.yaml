@@ -6,5 +6,5 @@ metadata:
   name: secret-validator-example-role
 rules:
   - apiGroups: [""]
-    resources: ["pods", "services"]
+    resources: ["secrets"]
     verbs: ["get", "list"]

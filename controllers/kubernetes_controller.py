@@ -18,11 +18,14 @@ class KubernetesController:
 
         self._pod_service.get_pods(namespace)
 
-    def check_secret_existence(self, secret_name: str):
+    def check_secret_existence(self, namespace: str, secret_name: str):
         self._logger.info(
             "Request received to check secret "
             f"existence with secret_name: {secret_name}"
+            f"in a specific namespace: {namespace}"
         )
 
-        secret = self._secret_service.get_secret(secret_name)
-        self._logger.debug(f"Found secret: {secret}")
+        existence = self._secret_service.get_secret(namespace, secret_name)
+        self._logger.debug(f"Found secret: {secret_name} in {namespace}")
+
+        return existence
