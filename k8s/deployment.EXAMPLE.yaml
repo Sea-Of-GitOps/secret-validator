@@ -5,7 +5,7 @@ metadata:
   name: secret-validator-service
   namespace: secret-validator-ns
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: secret-validator
@@ -14,9 +14,19 @@ spec:
       labels:
         app: secret-validator
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
       serviceAccountName: secret-validator-example-sa
       containers:
         - name: secret-validator-container
           image: secret-validator:0.1.0
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "500m"
+            limits:
+              memory: "256Mi"
+              cpu: "1000m"
           ports:
             - containerPort: 5000
