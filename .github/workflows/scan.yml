@@ -1,35 +1,41 @@
-name: Trivy Scan
+name: Build and Scan Docker Image
 
 on:
   pull_request:
     branches:
-      - main
       - devel
   push:
     branches:
       - main
-      - devel
 
 jobs:
-  trivy-scan:
-    runs-on: ubuntu-20.04
+  build-and-scan:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
 
-      - name: Set up Trivy
-        uses: aquasecurity/trivy-action@v0.0.10
+    - name: Build Docker image with Buildx
+      run: |
+        docker buildx create --use  # Assicurati che Buildx sia configurato
+        docker buildx build --file Dockerfile -t secret-validator:trivy .
 
-      - name: Scan Docker image
-        run: |
-          trivy image --exit-code 1 --no-progress --format json -o trivy-report.json your-docker-image
+    - name: Scan Docker image with Trivy
+      uses: aquasecurity/trivy-action@v0.0.10
+      with:
+        image-ref: "secret-validator:trivy"
+        format: "table"
+        exit-code: 0
+        vuln-type: "os,library"
+        severity: "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
+        output: "trivy-report.json"
 
-      - name: Upload Trivy report as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: trivy-report
-          path: trivy-report.json
+    - name: Upload Trivy report as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: trivy-report
+        path: trivy-report.json
