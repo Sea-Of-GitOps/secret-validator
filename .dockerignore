@@ -1,0 +1,15 @@
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.log
+*.git
+Dockerfile
+.dockerignore
+venv/
+.venv/
+*.pem
+*.key
+*.crt
+.DS_Store
+*.sqlite

@@ -1,13 +1,19 @@
 FROM python:3.12-slim
 
-RUN useradd --create-home appuser
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
 WORKDIR /app
-COPY . /app
 
-RUN pip install --no-cache-dir -r requirements.txt
+COPY . ./
 
-RUN chown -R appuser:appuser /app
-USER appuser
-EXPOSE 5000
-CMD ["python", "main.py"]
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq-dev gcc && \
+    pip install --no-cache-dir -r requirements.txt && \
+    apt-get purge -y --auto-remove gcc && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+USER 1000:1000
+
+ENTRYPOINT ["python"]
+CMD ["main.py"]
