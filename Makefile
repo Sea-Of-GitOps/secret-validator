@@ -1,16 +1,12 @@
-# Kind cluster name
 KIND_CLUSTER_NAME := secret-validator-cluster
-# Docker image name and tag
 DOCKER_IMAGE := secret-validator:0.1.0
-# Kind configuration file path
 KIND_CONFIG := k8s/kind/kind-cluster.EXAMPLE.yaml
-# Directory containing Kubernetes manifests
 K8S_MANIFEST_DIR := k8s/
 NAMESPACE = secret-validator-ns
 
-.PHONY: test-k8s create-kind build-docker load-docker apply-k8s port-forward-service-k8s
+.PHONY: all clean test test-k8s create-kind build-docker load-docker apply-k8s port-forward-service-k8s
 
-test-k8s: create-kind build-docker load-docker apply-k8s
+all: create-kind build-docker load-docker clean-deployment apply-k8s
 
 create-kind:
 	@if ! kind get clusters | grep -q $(KIND_CLUSTER_NAME); then \
@@ -43,7 +39,12 @@ clean:
 	echo "Clean up completed."
 
 clean-deployment:
-	kubectl delete -f k8s/deployment.EXAMPLE.yaml
+	@if kubectl get deployment secret-validator-service -n $(NAMESPACE) > /dev/null 2>&1; then \
+		echo "Deleting deployment..."; \
+		kubectl delete -f k8s/deployment.EXAMPLE.yaml; \
+	else \
+		echo "Deployment not found, nothing to delete."; \
+	fi
 
 create-secrets:
 	@echo "Creating secrets with expiration dates in namespace $(NAMESPACE)"
