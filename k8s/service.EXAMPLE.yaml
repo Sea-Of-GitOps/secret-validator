@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: secret-validator-service
+  namespace: secret-validator-ns
+spec:
+  selector:
+    app: secret-validator
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: ClusterIP
