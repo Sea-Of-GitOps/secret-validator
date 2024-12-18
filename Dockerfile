@@ -1,14 +1,14 @@
-FROM python:3.12-slim
+FROM python:3.12-alpine
 
 WORKDIR /app
 
 COPY . /app
-RUN python -m ensurepip --upgrade && pip install -r requirements.txt
 
-
-RUN apt-get update && apt-get install -y --no-install-recommends libpq-dev gcc && \
-    apt-get autoremove -y gcc && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk update && apk add --no-cache \
+    libpq-dev gcc musl-dev && \
+    pip install --no-cache-dir -r requirements.txt && \
+    apk del gcc musl-dev && \
+    rm -rf /var/cache/apk/*
 
 USER 1000:1000
 
