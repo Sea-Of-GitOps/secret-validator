@@ -8,12 +8,6 @@ class SecretService:
         self._k8s_service = k8s_service
 
     def get_secret(self, namespace: str, secret_name: str):
-        self._logger.debug(
-            "Fetching secret data from cluster "
-            f"kubernetes with secret_name: {secret_name}"
-            f"in a specific namespace: {namespace}"
-        )
-
         try:
             secrets = (
                 self._k8s_service.get_core_v1_api().list_namespaced_secret(
@@ -21,17 +15,11 @@ class SecretService:
                 )
             )
             for secret in secrets.items:
-                self._logger.debug(f"secret_name: {secret.metadata.name}")
-                if self._check_secret_name(secret.metadata.name, secret_name):
+                if secret.metadata.name == secret_name:
                     return True
-
         except ApiException as e:
-            print(f"Exception when calling Kubernetes API: {e}")
-            return False
-
-        self._logger.debug(
-            f"Secret {secret_name} not found in namespace {namespace}"
-        )
+            self._logger.error(f"API Exception: {e}")
+            raise Exception("Failed to retrieve secret data from Kubernetes.")
         return False
 
     def _check_secret_name(self, secret1: str, secret2: str):
